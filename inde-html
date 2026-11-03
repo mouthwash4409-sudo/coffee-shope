@@ -1,0 +1,308 @@
+HTML
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قهوة البن | متجر القهوة</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Tahoma,Arial,sans-serif;
+  background:#f8f5f0;
+  color:#33251c;
+}
+header{
+  background:#3b2418;
+  color:white;
+  padding:22px 7%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:15px;
+}
+.logo{font-size:25px;font-weight:bold}
+header button{
+  background:#d6a15d;
+  border:0;
+  padding:12px 20px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+.hero{
+  text-align:center;
+  padding:55px 15px;
+  background:#ead9c5;
+}
+.hero h1{font-size:35px;margin:0 0 15px}
+.hero p{font-size:18px}
+main{padding:35px 7%}
+h2{text-align:center;margin-bottom:25px}
+.search{
+  display:block;
+  width:100%;
+  max-width:450px;
+  margin:0 auto 30px;
+  padding:14px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  font-size:16px;
+}
+.products{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:22px;
+}
+.card{
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 3px 12px #0001;
+  padding-bottom:18px;
+}
+.card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+}
+.card h3,.card p,.card .price{margin:12px 16px}
+.price{font-weight:bold;color:#8b4d23;font-size:19px}
+.card button{
+  margin:5px 16px;
+  width:calc(100% - 32px);
+  padding:12px;
+  background:#4b2e20;
+  color:white;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+}
+.card button:hover{background:#71472f}
+.cart{
+  background:white;
+  margin-top:40px;
+  padding:25px;
+  border-radius:14px;
+}
+.cart-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #eee;
+}
+.cart-item button{
+  border:0;
+  background:#eee;
+  padding:6px 10px;
+  cursor:pointer;
+  border-radius:5px;
+}
+.total{
+  font-size:22px;
+  font-weight:bold;
+  margin-top:20px;
+}
+.checkout{
+  background:#d6a15d;
+  border:0;
+  padding:14px 25px;
+  border-radius:8px;
+  font-size:17px;
+  cursor:pointer;
+  margin-top:15px;
+}
+footer{
+  text-align:center;
+  padding:25px;
+  background:#3b2418;
+  color:white;
+  margin-top:40px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">☕ قهوة البن</div>
+  <button onclick="document.getElementById('cart').scrollIntoView()">
+    سلة المشتريات (<span id="count">0</span>)
+  </button>
+</header>
+
+<section class="hero">
+  <h1>قهوتك المفضلة تبدأ من هنا</h1>
+  <p>اختار قهوتك واستمتع بأفضل مذاق</p>
+</section>
+
+<main>
+  <h2>منتجاتنا</h2>
+
+  <input
+    class="search"
+    id="search"
+    placeholder="ابحث عن القهوة..."
+    oninput="showProducts()"
+  >
+
+  <div class="products" id="products"></div>
+
+  <section class="cart" id="cart">
+    <h2>🛒 سلة المشتريات</h2>
+    <div id="cartItems">السلة فارغة</div>
+    <div class="total">الإجمالي: <span id="total">0</span> جنيه</div>
+    <button class="checkout" onclick="checkout()">إتمام الطلب</button>
+  </section>
+</main>
+
+<footer>
+  © 2026 قهوة البن - جميع الحقوق محفوظة
+</footer>
+
+<script>
+const products = [
+  {
+    id:1,
+    name:"قهوة تركي",
+    price:120,
+    image:"https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=600&q=80",
+    description:"قهوة تركي بطعم غني ومميز."
+  },
+  {
+    id:2,
+    name:"قهوة اسبريسو",
+    price:180,
+    image:"https://images.unsplash.com/photo-1510707577719-ae7c14805e3a?auto=format&fit=crop&w=600&q=80",
+    description:"اسبريسو قوي لعشاق القهوة."
+  },
+  {
+    id:3,
+    name:"قهوة لاتيه",
+    price:150,
+    image:"https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80",
+    description:"قهوة بالحليب بطعم ناعم."
+  },
+  {
+    id:4,
+    name:"قهوة أمريكانو",
+    price:140,
+    image:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80",
+    description:"قهوة خفيفة ومناسبة لكل وقت."
+  },
+  {
+    id:5,
+    name:"قهوة موكا",
+    price:170,
+    image:"https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?auto=format&fit=crop&w=600&q=80",
+    description:"مزيج القهوة والشوكولاتة."
+  },
+  {
+    id:6,
+    name:"قهوة كابتشينو",
+    price:160,
+    image:"https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80",
+    description:"كابتشينو برغوة الحليب."
+  }
+];
+
+let cart = [];
+
+function showProducts(){
+  const search = document.getElementById("search").value.trim();
+  const filtered = products.filter(p => p.name.includes(search));
+
+  document.getElementById("products").innerHTML =
+    filtered.map(p => `
+      <div class="card">
+        <img src="${p.image}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <p>${p.description}</p>
+        <div class="price">${p.price} جنيه</div>
+        <button onclick="addToCart(${p.id})">أضف إلى السلة</button>
+      </div>
+    `).join("");
+}
+
+function addToCart(id){
+  const item = cart.find(p => p.id === id);
+
+  if(item){
+    item.quantity++;
+  }else{
+    const product = products.find(p => p.id === id);
+    cart.push({...product, quantity:1});
+  }
+
+  showCart();
+}
+
+function changeQuantity(id, amount){
+  const item = cart.find(p => p.id === id);
+  if(!item) return;
+
+  item.quantity += amount;
+
+  if(item.quantity <= 0){
+    cart = cart.filter(p => p.id !== id);
+  }
+
+  showCart();
+}
+
+function showCart(){
+  const container = document.getElementById("cartItems");
+  let total = 0;
+  let count = 0;
+
+  if(cart.length === 0){
+    container.innerHTML = "السلة فارغة";
+  }else{
+    container.innerHTML = cart.map(p => {
+      total += p.price * p.quantity;
+      count += p.quantity;
+
+      return `
+        <div class="cart-item">
+          <span>${p.name}</span>
+          <span>${p.price * p.quantity} جنيه</span>
+          <span>
+            <button onclick="changeQuantity(${p.id},-1)">−</button>
+            ${p.quantity}
+            <button onclick="changeQuantity(${p.id},1)">+</button>
+          </span>
+        </div>
+      `;
+    }).join("");
+  }
+
+  document.getElementById("total").textContent = total;
+  document.getElementById("count").textContent = count;
+}
+
+function checkout(){
+  if(cart.length === 0){
+    alert("السلة فارغة، أضف منتجات أولاً.");
+    return;
+  }
+
+  alert("تم تجهيز طلبك بقيمة " +
+    document.getElementById("total").textContent +
+    " جنيه. هذا نموذج تجريبي للطلب.");
+
+  cart = [];
+  showCart();
+}
+
+showProducts();
+showCart();
+</script>
+
+</body>
+</html>
